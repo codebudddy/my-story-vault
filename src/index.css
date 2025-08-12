@@ -1,0 +1,248 @@
+body {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  margin: 2px;
+  padding: 20px;
+  background-image: url("../assets/bg2.jpg");
+  background-size: cover; /* fills area while maintaining aspect ratio */
+  background-position: center; /* keeps it centered */
+  background-repeat: no-repeat;
+
+  color: #f7ebeb;
+  font-style: italic;
+}
+
+a {
+  color: #fff;
+}
+
+button {
+  background-color: #01021a2e;
+  border: 1px dotted #4465a7;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  padding: 5px 8px;
+  color: #4465a7;
+  cursor: pointer;
+  margin: 4px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.2);
+}
+
+.dashboard {
+  margin: 4px;
+  display: flex;
+  justify-content: space-around;
+  background-color: rgba(0, 0, 0, 0.9); /* black with 50% transparency */
+  align-items: top;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+.dashboard .sidebar {
+  flex: 1;
+  text-align: left;
+  width: 100%;
+  padding-left: 20px;
+}
+
+.dashboard .mainPanel {
+  flex: 3;
+  width: 100%;
+
+  background-color: #040013;
+  margin-left: 10px;
+  padding-right: 20px;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.dashboard .mainPanel .mainPanelContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding: 4px 10px;
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputForm input {
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.inputForm input,
+.inputForm textarea {
+  padding: 4px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+  margin: 2px;
+  width: 100%;
+}
+
+/* chapters List*/
+.chapterCardContainer {
+  max-width: 300px;
+  margin: 0 10px;
+}
+
+.chapterCardContainer .chapterCard {
+  width: 100%;
+  min-height: 100%;
+  text-align: center;
+  background-color: #020633;
+  border-radius: 10px;
+  padding: 5px;
+  cursor: pointer;
+  position: relative;
+}
+
+.chapterCardContainer .chapterCard .title {
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+.chapterCardContainer .chapterCard .number {
+  margin-bottom: 010px;
+}
+
+.chapterCardContainer .chapterCard .preview {
+  font-size: 15px;
+}
+
+.chapterCardContainer .chapterCard .delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.chapterCardContainer .chapterCard .delete svg {
+  width: 15px;
+  height: 15px;
+  color: #4465a7;
+  transition: all 0.4s ease-in-out;
+}
+
+.chapterCardContainer .chapterCard .delete svg:hover {
+  transform: scale(1.2);
+}
+
+/*Read Chapter*/
+
+.readChapterContainer {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.95);
+  left: 0;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  margin: auto;
+  text-align: center;
+  overflow-y: scroll;
+  z-index: 1;
+  scroll-behavior: smooth;
+}
+
+.readChapterContainer .readChapter {
+  max-width: 100%;
+  padding: 2rem;
+  min-height: 100%;
+}
+
+.readChapterContainer .readChapter .chapterNumber {
+  font-size: 2rem;
+}
+
+.readChapterContainer .readChapter .title {
+  font-size: 1.5rem;
+}
+
+.readChapterContainer .readChapter .content {
+  max-width: 50vw;
+  margin: auto;
+  text-align: left;
+  white-space: pre-wrap;
+  line-height: 2;
+  font-size: 15px;
+  overflow-y: scroll;
+}
+
+.readChapterContainer .readChapter .chapterUtils {
+  position: fixed;
+  bottom: 4rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.readChapterContainer .readChapter .chapterUtils button {
+  color: #a13f3f;
+  transition: all 1s ease-in-out;
+}
+
+.readChapterContainer .readChapter .chapterUtils button:hover {
+  transform: scale(1.2);
+}
+
+/* Edit Chapter*/
+
+.editChapter {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to left, rgba(0, 125, 125, 0.9), transparent);
+  top: 0;
+  left: 0;
+  padding: 1rem;
+}
+.editChapter .editChapterHeader {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.editChapter .editChapterForm {
+  width: 60vw;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-left: 2rem;
+}
+
+.editChapter .editChapterForm input,
+.editChapter .editChapterForm textarea {
+  margin-bottom: 1rem;
+  padding: 0.5rem 10px;
+  font-size: 1rem;
+  color: #381b21;
+}
+
+.editChapter .editChapterForm button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.5s ease-in-out;
+}
+
+.editChapter .editChapterForm button:hover {
+  transform: translateX(-10px);
+  background-color: #381b21;
+}
