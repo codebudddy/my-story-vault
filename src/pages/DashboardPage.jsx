@@ -11,11 +11,11 @@ export default function DashboardPage() {
   const [modalState, setModalState] = useState("closed");
   const [editorOpen, setEditorOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [myBooks, setMyBooks] = useState("");
+  const [myBooks, setMyBooks] = useState([]);
   const [content, setContent] = useState("");
   const [chapterOpen, setChapterOpen] = useState(false);
   const [chapterData, setChapterData] = useState("");
-  const { logout, trimString, user } = useAuthContext();
+  const { logout, trimString, user, loading } = useAuthContext();
   const {
     createBook,
     getBooks,
@@ -60,16 +60,15 @@ export default function DashboardPage() {
   //Create Book Modal
   const handleBookCreation = async (event) => {
     event.preventDefault();
-    if (!title.length) {
+    if (!title) {
       alert("Book title cannot be empty");
       return;
     }
 
     //create books
     try {
-      createBook(trimString(title), user).then((createdBook) =>
-        console.log(createdBook)
-      );
+      const createdBook = await createBook(user.uid, trimString(title));
+      console.log(createdBook);
     } catch (error) {
       console.error(error);
     }
@@ -110,24 +109,23 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const booksList = await getBooks();
-        setMyBooks(booksList);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchBooks();
-  }, [getBooks]);
+    if (loading || !user) {
+      setMyBooks([]);
+      return;
+    }
+    const unsubscribe = getBooks((myBooks) => {
+      console.log("Books updated:", myBooks);
+      setMyBooks(myBooks);
+    });
+    return () => unsubscribe();
+  }, [user, loading, getBooks]);
 
   return (
     <>
       <main className="dashboard">
         <div className="sidebar">
           <header>
-            <h1>Books</h1>
+            <h1>Welcome {user.displayName}</h1>
           </header>
 
           <div className="addBooks">
@@ -164,7 +162,7 @@ export default function DashboardPage() {
             <></>
           )}
 
-          <div className="book">
+          <div className="books">
             {myBooks &&
               myBooks.map((book) => (
                 <div
@@ -176,8 +174,6 @@ export default function DashboardPage() {
                           paddingLeft: "1rem",
                           // marginBottom: "5px",
                           cursor: "pointer",
-                          // backgroundColor: "#e0e0e0",
-                          border: "1px solid #ccc",
                           borderRadius: "5px",
                         }
                       : { cursor: "pointer" }
@@ -189,9 +185,10 @@ export default function DashboardPage() {
                       alignItems: "center",
                       justifyContent: "start",
                     }}
+                    className="book"
                   >
                     <IconTrashX stroke={2} color="#5763f1" />
-                    <p style={{ marginLeft: "5px" }}>{book.name}📕</p>
+                    <p style={{ marginLeft: "5px" }}>{book.bookName}📕</p>
                   </div>
                 </div>
               ))}

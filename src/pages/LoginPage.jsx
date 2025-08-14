@@ -7,9 +7,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
-      await login(trimString(email), trimString(password));
+      const loggedInUser = await login(trimString(email), trimString(password));
+      console.log(loggedInUser);
+      return;
     } catch (error) {
       console.log(error);
     }
@@ -18,24 +22,28 @@ export default function LoginPage() {
   return user ? (
     <Navigate to="/dashboard" />
   ) : (
-    <div>
+    <div className="authForm">
       <h1>Login</h1>
-      <input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={handleLogin}>Login</button>
-      <p>New here?</p>
-      <p>
-        <Link to="/signup">Signup Instead</Link>
-      </p>
+      <form onSubmit={handleLogin}>
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
+        <button>Login</button>
+      </form>
+      <div className="footText">
+        <p>New here?</p>
+        <p>
+          <Link to="/signup">Signup Instead</Link>
+        </p>
+      </div>
     </div>
   );
 }

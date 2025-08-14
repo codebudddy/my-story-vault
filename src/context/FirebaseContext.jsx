@@ -10,29 +10,100 @@ import {
   getDocs,
   serverTimestamp,
   getDoc,
+  query,
+  onSnapshot,
+  orderBy,
 } from "firebase/firestore";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const FirebaseContext = createContext();
 
 export function FirebaseProvider({ children }) {
   const [selectedBook, setSelectedBook] = useState(null);
   const [chaptersList, setChaptersList] = useState(null);
+  const { loading, user } = useAuthContext();
 
   // CRUD functions
 
   //Create and Fetch Book Titles
-  const createBook = async (bookName, user) => {
-    const bookRef = await addDoc(collection(db, "books"), {
-      name: bookName,
-      owner: user.uid,
-      createdAt: serverTimestamp(),
-    }).catch((err) => console.log(err));
-    return bookRef;
+  const createBook = async (userId, bookName) => {
+    try {
+      const bookRef = await addDoc(collection(db, "users", userId, "books"), {
+        bookName,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      return bookRef.id;
+    } catch (error) {
+      throw new Error(`Failed to add book: ${error.message}`);
+    }
   };
 
-  const getBooks = async () => {
-    const snapshot = await getDocs(collection(db, "books"));
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  // Get books from a user's books subcollection with real-time updates
+  const getBooks = (callback) => {
+    if (loading) {
+      console.log("getBooks: Auth state is still loading");
+      if (typeof callback === "function") {
+        callback([]);
+      } else {
+        console.error(
+          "getBooks: callback must be a function, received:",
+          callback
+        );
+      }
+      return () => {};
+    }
+    if (!user || !user.uid) {
+      console.log("getBooks: No user logged in");
+      if (typeof callback === "function") {
+        callback([]);
+      } else {
+        console.error(
+          "getBooks: callback must be a function, received:",
+          callback
+        );
+      }
+      return () => {};
+    }
+    if (typeof callback !== "function") {
+      console.error(
+        "getBooks: callback must be a function, received:",
+        callback
+      );
+      return () => {};
+    }
+    try {
+      // Sort by createdAt descending (newest first)
+      const q = query(
+        collection(db, "users", user.uid, "books"),
+        orderBy("createdAt", "asc")
+      );
+
+      console.log("getBooks: Setting up listener for user:", user.uid);
+      return onSnapshot(
+        q,
+        (snapshot) => {
+          const books = [];
+          snapshot.forEach((doc) => {
+            books.push({ id: doc.id, ...doc.data() });
+          });
+          console.log("getBooks: Sending books to callback:", books);
+          callback(books);
+        },
+        (error) => {
+          console.error("Error fetching books:", error.code, error.message);
+          if (typeof callback === "function") {
+            callback([]);
+          }
+        }
+      );
+    } catch (error) {
+      console.error("Error setting up books listener:", error);
+      if (typeof callback === "function") {
+        callback([]);
+      }
+      return () => {};
+    }
   };
 
   const createChapter = async (bookId, chapterData) => {
