@@ -1,31 +1,36 @@
 import React, { useState } from "react";
 import { useFirebase } from "../hooks/useFirebaseContext";
 
-export default function UpdateChapter({ currentChapter, onClose }) {
+export default function UpdateChapter({
+  currentChapter,
+  onClose,
+  returnToMainPanel,
+}) {
   const [chapterNumber, setChapterNumber] = useState(
     currentChapter.chapterNumber
   );
 
   const [title, setTitle] = useState(currentChapter.title);
   const [content, setContent] = useState(currentChapter.content);
+
   const { updateChapter } = useFirebase();
   //Get current
   //handle chapter update
 
   const handleChapterUpdate = async () => {
-    const newChapterDate = {
-      title,
-      content,
-    };
+    console.log(currentChapter);
 
     try {
       const updatedChapter = await updateChapter(
-        currentChapter.bookId,
+        currentChapter.parentId,
         currentChapter.id,
-        newChapterDate
+        chapterNumber,
+        title,
+        content
       );
-      alert(`Changes to ${updatedChapter.title} Saved`);
+      alert(`Changes to ${updatedChapter} Saved`);
       onClose();
+      returnToMainPanel();
     } catch (error) {
       console.error(error);
     }

@@ -114,6 +114,16 @@ button:hover {
   border: 1px solid #fffefe;
 }
 
+.dashboard .addChapterModal {
+  position: fixed;
+  height: 100vh;
+  width: 50vw;
+  right: 0;
+  top: 0;
+  background-color: #0a012c;
+  padding: 2rem;
+}
+
 .dashboard .createBook {
   position: fixed;
   top: 20px;
@@ -123,6 +133,7 @@ button:hover {
   text-align: left;
   background-color: rgba(0, 0, 0, 0.9);
   padding: 5rem;
+  z-index: 2;
 }
 
 .createBook input {
@@ -162,6 +173,18 @@ button:hover {
   padding: 1rem;
 }
 
+.dashboard .mainPanel .hint {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard .mainPanel .hint p {
+  font-size: 2rem;
+}
+
 .dashboard .mainPanel .mainPanelContainer {
   width: 100%;
   display: flex;
@@ -172,12 +195,12 @@ button:hover {
 
 .inputForm {
   display: flex;
+  gap: 1rem;
   flex-direction: column;
 }
 
 .inputForm input {
-  height: 20px;
-  margin-bottom: 10px;
+  height: 2rem;
 }
 
 .inputForm input,
@@ -188,12 +211,14 @@ button:hover {
   border: none;
   margin: 2px;
   width: 100%;
+  font-size: 1.5rem;
 }
 
 /* chapters List*/
 .chapterCardContainer {
   max-width: 300px;
   margin: 0 10px;
+  z-index: 1;
 }
 
 .chapterCardContainer .chapterCard {

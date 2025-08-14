@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useFirebase } from "../hooks/useFirebaseContext";
 
 export default function EditorModal({
-  isOpen,
+
   onClose,
   onSave,
   initialContent,
@@ -11,8 +11,6 @@ export default function EditorModal({
   const [title, setTitle] = useState("");
   const [chapterNumber, setChapterNumber] = useState(null);
   const { selectedBook } = useFirebase();
-
-  if (!isOpen) return null;
 
   const handleSave = () => {
     if (!title || !chapterNumber || !content) {
@@ -45,7 +43,7 @@ export default function EditorModal({
         <h2 className="text-lg font-bold mb-3">Content Editor</h2>
         <div className="inputForm">
           <input
-            type="number"
+            type="text"
             name="chapterNumber"
             className="input"
             placeholder="What chapter is this?"

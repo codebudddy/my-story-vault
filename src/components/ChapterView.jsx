@@ -4,12 +4,12 @@ import { useFirebase } from "../hooks/useFirebaseContext";
 
 export default function ChapterView({ prop, onClick }) {
   const substringify = (string, length) => string.substring(0, length);
-  const { deleteChapter, } = useFirebase();
+  const { deleteChapter } = useFirebase();
 
   const handleChapterDelete = async () => {
     if (window.confirm("Delete Chapter?")) {
       try {
-        const deletedChapter = await deleteChapter(prop.bookId, prop.id);
+        const deletedChapter = await deleteChapter(prop.parentId, prop.id);
         console.log(`${deletedChapter} has been deleted`);
       } catch (error) {
         console.error(error);

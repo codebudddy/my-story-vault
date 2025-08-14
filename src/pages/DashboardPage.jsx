@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const [title, setTitle] = useState("");
   const [myBooks, setMyBooks] = useState([]);
   const [content, setContent] = useState("");
+  const [selectedBookId, setSelectedBookId] = useState("");
   const [chapterOpen, setChapterOpen] = useState(false);
   const [chapterData, setChapterData] = useState("");
   const { logout, trimString, user, loading } = useAuthContext();
@@ -28,9 +29,12 @@ export default function DashboardPage() {
   } = useFirebase();
 
   const handleLogout = async () => {
+    setSelectedBook(null);
+    setSelectedBookId(null);
+    setChaptersList([]);
+    setEditorOpen(false);
+
     try {
-      setSelectedBook(null);
-      setEditorOpen(false);
       await logout();
       alert("This user is logged out");
     } catch (error) {
@@ -45,18 +49,10 @@ export default function DashboardPage() {
   };
 
   //toggle editor
-
   const toggleEditor = () => {
-    if (!editorOpen) {
-      setEditorOpen(true);
-    } else {
-      setEditorOpen(false);
-    }
-
-    console.log(editorOpen);
+    setEditorOpen((prev) => !prev);
   };
 
-  //Modals
   //Create Book Modal
   const handleBookCreation = async (event) => {
     event.preventDefault();
@@ -78,24 +74,22 @@ export default function DashboardPage() {
 
   //handle selected book
   const handleSelectedBook = async (book) => {
-    setSelectedBook(book.id);
-    localStorage.setItem(
-      "persistData",
-      JSON.stringify({ selectedBook: book.id })
-    );
-    try {
-      const chapters = await getChapters(book.id);
-      setChaptersList(chapters);
-    } catch (error) {
-      console.error(error);
-    }
+    setSelectedBook(book);
+    setSelectedBookId(book.id);
+    console.log(chaptersList);
   };
 
   //Handle chapter creation
   const handleCreateChapter = async (newContent) => {
     setContent(newContent);
     try {
-      const newBook = await createChapter(selectedBook, newContent);
+      const newBook = await createChapter(
+        selectedBook.id,
+        selectedBook.bookName,
+        newContent.chapterNumber,
+        newContent.title,
+        newContent.content
+      );
       console.log(newBook);
     } catch (error) {
       console.error(error);
@@ -114,11 +108,24 @@ export default function DashboardPage() {
       return;
     }
     const unsubscribe = getBooks((myBooks) => {
-      console.log("Books updated:", myBooks);
       setMyBooks(myBooks);
     });
     return () => unsubscribe();
   }, [user, loading, getBooks]);
+
+  useEffect(() => {
+    if (loading || !user || !selectedBookId) {
+      if (selectedBookId) {
+        setChaptersList([]);
+      }
+      return;
+    }
+
+    const unsubscribeChapters = getChapters(selectedBookId, (chapters) => {
+      setChaptersList(chapters);
+    });
+    return () => unsubscribeChapters();
+  }, [selectedBookId]);
 
   return (
     <>
@@ -169,7 +176,7 @@ export default function DashboardPage() {
                   onClick={() => handleSelectedBook(book)}
                   key={book.id}
                   style={
-                    book.id === selectedBook
+                    book.id === selectedBook?.id
                       ? {
                           paddingLeft: "1rem",
                           // marginBottom: "5px",
@@ -193,15 +200,17 @@ export default function DashboardPage() {
                 </div>
               ))}
           </div>
-          <button onClick={handleLogout}>Logout</button>
+          <div>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
         </div>
         <div className="mainPanel">
-          {chaptersList?.length ? (
+          {chaptersList.length > 0 && (
             <>
               <div className="mainPanelContainer">
                 <div>
                   <button onClick={toggleEditor} className="addChapter">
-                    New Chapter
+                    <Plus size={50} />
                   </button>
                 </div>
                 {chaptersList.map((chapter) => (
@@ -219,35 +228,43 @@ export default function DashboardPage() {
                 />
               )}
             </>
-          ) : (
-            <div>
-              {selectedBook && (
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    padding: " 4px 0",
-                  }}
-                >
-                  <h3>Start Scribbling, Scribe</h3>
-                  <button onClick={toggleEditor} className="addChapter">
-                    <Plus />
-                  </button>
-                </div>
-              )}
+          )}
+
+          {!selectedBook && (
+            <div className="hint">
+              <p>To view chapters, select a book</p>
             </div>
           )}
-          <div className="addChapterModal modal">
-            <EditorModal
-              isOpen={editorOpen}
-              onClose={() => setEditorOpen(false)}
-              onSave={handleCreateChapter}
-              initialContent={content}
-            />
-          </div>
+
+          {selectedBook && !chaptersList?.length && (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                padding: " 4px 0",
+              }}
+            >
+              <h3>Add your first chapter</h3>
+              <button onClick={toggleEditor} className="addChapter">
+                <Plus size={50} />
+              </button>
+            </div>
+          )}
+
+          {editorOpen && (
+            <div className="addChapterModal modal">
+              <EditorModal
+                isOpen={editorOpen}
+                onClose={() => setEditorOpen(false)}
+                onSave={handleCreateChapter}
+                initialContent={content}
+              />
+            </div>
+          )}
         </div>
       </main>
     </>

@@ -5,7 +5,6 @@ import UpdateChapter from "./UpdateChapter.jsx";
 
 export default function ReadChapter({ chapterData, toggleChapterState }) {
   const [chapterEditOpen, setChapterEditOpen] = useState(false);
-  console.log(chapterData);
 
   return (
     <div className="readChapterContainer">
@@ -32,6 +31,7 @@ export default function ReadChapter({ chapterData, toggleChapterState }) {
         <UpdateChapter
           currentChapter={chapterData}
           onClose={() => setChapterEditOpen(false)}
+          returnToMainPanel={() => toggleChapterState(false)}
         />
       )}
     </div>
