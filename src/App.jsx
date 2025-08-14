@@ -14,6 +14,7 @@ import ChapterPage from "./pages/ChapterPage";
 import ProtectedRoute from "./components/ProtectedRoute"; // We'll create this
 
 export default function App() {
+  console.log("Environment variables:", import.meta.env);
   return (
     <Router>
       <Routes>

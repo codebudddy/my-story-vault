@@ -221,6 +221,7 @@ button:hover {
   z-index: 1;
 }
 
+
 .chapterCardContainer .chapterCard {
   width: 100%;
   min-height: 100%;
@@ -231,6 +232,7 @@ button:hover {
   cursor: pointer;
   position: relative;
 }
+
 
 .chapterCardContainer .chapterCard .title {
   font-size: 1rem;

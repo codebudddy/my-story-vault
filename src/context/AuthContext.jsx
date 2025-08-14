@@ -8,8 +8,8 @@ import {
 import { setDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
 
 import { createContext, useEffect, useState } from "react";
-import { auth } from "../firebaseConfig";
-import { db } from "../firebaseConfig";
+import { auth } from "../services/firebase";
+import { db } from "../services/firebase";
 
 //configure context.
 const AuthContext = createContext(null);
